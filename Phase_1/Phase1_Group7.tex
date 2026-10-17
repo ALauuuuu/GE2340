@@ -89,9 +89,9 @@ A compact comparison table is encouraged when it saves space.
 [Replace this instruction with your proposal content.]
 
 \section{Expected Impact \& Project Feasibility}
-Explain the expected practical benefit, novelty, and value to the campus community. Outline the data collection and implementation plan, required tools, major risks, and realistic mitigation measures. Confirm that the group has access to the necessary hardware, software, and data.
+The system is designed to deliver practical benefits to the campus community by providing individualized food options. It analyses different dimensions such as location, and mood along with historical favorites that can help user to reduce the decision time on choosing the cuisine and enhance the dining experience on campus. It is of paramount importance to prioritize food safety by filtering out any items on the menu that students dislike or that have other restrictions to reduce food-related incidents. Furthermore, this preference data can help campus dining services to adjust their menus and operations in timely manner.
 
-[Replace this instruction with your proposal content.]
+To ensure the feasibility of the project, basic data collection is required, which involves campus menus, different canteen locations and their operating times by searching the internet and public API. Moreover, large amounts of personal preference data also need to be collected through questionnaires to customize the personalization chatbot. Those data will be stored in the PostgreSQL database. For the implementation phase, the system will integrate the LLM API, which is designed for understanding and generating language, with a Python backend to do constraint filtering and ranking. The primary risk is LLM hallucination, where the model may generate some inaccurate recommendations. To mitigate this, the system will validate outputs against the database to make sure the expected output is only menu items.
 
 % ======================= References (included in page limit) =======================
 % Cite sources in the text and replace the sample entry below.

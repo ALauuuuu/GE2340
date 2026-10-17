@@ -31,19 +31,24 @@
 \author{2026/2027 Semester A}
 
 \newcommand{\blankline}[1]{\rule{#1}{0.4pt}}
-\newcommand{\memberblock}[1]{%
+\newcommand{\memberblock}[7]{%
   \subsection*{Member #1}
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}l X@{}}
-    Name: & \blankline{8.5cm} \\
-    Student ID: & \blankline{4.0cm} \\
-    Contribution percentage: & \blankline{2.0cm}\% \\
+    Name: & \fillline{8.5cm}{#2} \\
+    Student ID: & \fillline{4.0cm}{#3} \\
+    Contribution percentage: & \fillline{2.0cm}{#4}\% \\
   \end{tabularx}
   \vspace{0.4em}
 
   \noindent\textbf{Specific tasks completed and deliverables produced:}\\[0.4em]
-  \blankline{\textwidth}\\[0.8em]
-  \blankline{\textwidth}\\[0.8em]
-  \blankline{\textwidth}
+  \underline{\makebox[\textwidth][l]{#5}}\\[0.8em]
+  \underline{\makebox[\textwidth][l]{#6}}\\[0.8em]
+  \underline{\makebox[\textwidth][l]{#7}}\\
+
+  % \blankline{\textwidth}\\[0.8em]
+  % \blankline{\textwidth}\\[0.8em]
+  % \blankline{\textwidth}
+
   \vspace{0.7em}
 }
 
@@ -62,15 +67,18 @@
 \vspace{0.8em}
 \noindent\textit{Complete all applicable member blocks. If the group has three members, write ``N/A'' in the Member 4 block. Describe concrete work rather than general statements such as ``helped with the project.''}
 
-\memberblock{1}
-\memberblock{2}
-\memberblock{3}
-\memberblock{4}
+\memberblock{1}{Lau Wing Lam}{58538853}{25}%
+  {Problem definition, scope. This is an example sentence. This is an example sentence. This is an ex-}
+  {ample sentence. This is an example sentence. This is an example sentence. This is an example sent-}
+  {tence. This is an example sentence. This is an example sentence. This is an example sentence.}
+\memberblock{2}{}{}{}{}{}{}
+\memberblock{3}{}{}{}{}{}{}
+\memberblock{4}{}{}{}{}{}{}
 
 \section*{Contribution Summary}
 \noindent
 \begin{tabularx}{\textwidth}{@{}>{\bfseries}l X@{}}
-  Total contribution percentage: & \blankline{2.0cm}\% \quad (must equal 100\%) \\
+  Total contribution percentage: & \fillline{2.0cm}{100}\% \quad (must equal 100\%) \\
   Remarks (if any): & \blankline{10cm} \\
                     & \blankline{10cm} \\
 \end{tabularx}

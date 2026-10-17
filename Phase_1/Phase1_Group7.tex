@@ -50,17 +50,16 @@
 \begin{document}
 \maketitle
 
-\noindent\textbf{Project topic:} [State the campus or student-life problem in one sentence.]\\
-\textbf{Target users/stakeholders:} [Identify who experiences the problem or benefits from the solution.]
+\noindent\textbf{Project topic:} Inefficient daily meal selection due to fragmented campus dining data and complex personal constraints\\
+\textbf{Target users/stakeholders:} University students and staff
 
 % ======================= Required sections (do NOT rename) =======================
 
 \section{Problem Definition \& Scope}
-Clearly define a practical problem related to campus or student life. Describe the current situation, affected users, why the problem matters, and the intended scope. State what is included and excluded so that the proposed project is achievable within the course schedule.
-What?
+Currently, the campus dining resources are fragmented and unevenly digitized, with several canteens continuing to utilize physical menus and lacking a platform that allows for real-time access to campus dining menus. Moreover, the campus community encompasses diverse economic, cultural, and religious backgrounds. When choosing meals, students and staff weigh multiple factors based on their needs, such as budget, distance to the canteen, cuisine style, dietary preferences, religious restrictions, and food allergies, which poses a decision-making challenge. When facing these complex personal considerations, traditional manual searching is time-consuming and inefficient, often leading to unnecessary expenditure of effort. To address this problem, this project aims to introduce an artificial intelligence approach to build an efficient meal recommendation system.
 
-[Replace this instruction with your proposal content.]
-
+The scope of this project includes a hybrid recommendation chatbot that uses an LLM to process natural language, extract the user intent, and perform data enrichment. It integrates this language processing with a rule-based scoring backend using structured menu databases to provide explainable recommendations.
+The scope excludes restaurant foot traffic tracking or training a customized LLM from scratch.
 \section{AI Task Formulation}
 Formulate the problem as an AI task. Specify the available or collectable inputs, the expected outputs, the unit of prediction/decision, relevant constraints, and how success will be evaluated. Identify the data source and any privacy, consent, or access considerations.
 
@@ -75,19 +74,19 @@ Present multiple plausible AI approaches. For each approach, briefly explain the
 Compare the proposed approaches using relevant dimensions such as expected effectiveness, data needs, implementation effort, compute cost, interpretability, robustness, privacy, and deployment constraints. Clearly identify the preferred approach and justify the choice.
 
 A compact comparison table is encouraged when it saves space.
-\begin{table}[t]
-  \centering
-  \caption{Comparison of candidate AI approaches.}
-  \label{tab:approach-comparison}
-  \begin{tabular}{lccc}
-    \toprule
-    Approach & Expected benefit & Main requirement & Main limitation \\
-    \midrule
-    [A] & [\ldots] & [\ldots] & [\ldots] \\
-    [B] & [\ldots] & [\ldots] & [\ldots] \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+% \begin{table}[t]
+%   \centering
+%   \caption{Comparison of candidate AI approaches.}
+%   \label{tab:approach-comparison}
+%   \begin{tabular}{lccc}
+%     \toprule
+%     Approach & Expected benefit & Main requirement & Main limitation \\
+%     \midrule
+%     [A] & [\ldots] & [\ldots] & [\ldots] \\
+%     [B] & [\ldots] & [\ldots] & [\ldots] \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
 [Replace this instruction with your proposal content.]
 

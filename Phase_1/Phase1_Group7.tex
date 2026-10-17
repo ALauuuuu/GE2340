@@ -56,8 +56,9 @@
 % ======================= Required sections (do NOT rename) =======================
 
 \section{Problem Definition \& Scope}
-Currently, the campus dining resources are fragmented and unevenly digitized, with several canteens continuing to utilize physical menus and lacking a platform that allows for real-time access to campus dining menus. Moreover, the campus community encompasses diverse economic, cultural, and religious backgrounds. When choosing meals, students and staff weigh multiple factors based on their needs, such as budget, distance to the canteen, cuisine style, dietary preferences, religious restrictions, and food allergies, which poses a decision-making challenge. When facing these complex personal considerations, traditional manual searching is time-consuming and inefficient, often leading to unnecessary expenditure of effort. To address this problem, this project aims to introduce an artificial intelligence approach to build an efficient meal recommendation system.
+Currently, the campus dining resources are fragmented and unevenly digitized, with several canteens continuing to utilize physical menus and lacking a platform that allows for real-time access to campus dining menus. Moreover, the campus community encompasses diverse economic, cultural, and religious backgrounds. When choosing meals, students and staff weigh multiple factors based on their needs, such as budget, distance to the canteen, cuisine style, dietary preferences, religious restrictions, and food allergies, which poses a decision-making challenge. When facing these complex personal considerations, traditional manual searching is time-consuming and inefficient, often leading to unnecessary expenditure of effort.
 
+To address this problem, this project aims to introduce an artificial intelligence approach to build an efficient meal recommendation system.
 The scope of this project includes a hybrid recommendation chatbot that uses an LLM to process natural language, extract the user intent, and perform data enrichment. It integrates this language processing with a rule-based scoring backend using structured menu databases to provide explainable recommendations.
 The scope excludes restaurant foot traffic tracking or training a customized LLM from scratch.
 
@@ -67,10 +68,10 @@ The collectible inputs include the locations, opening hours, and menus of campus
 Constraints are that recommendations must be limited to currently available menu items and must not ignore or violate allergies, religious or dietary restrictions, budget, or canteen hours. User satisfaction will be measured via a satisfaction survey after each interaction, asking users to rate the relevance and usefulness of the recommendations on a 1-5 scale. Success is defined as achieving a mean score of at least 3.5/5.0. Data sources include canteen and restaurant information and menus obtained via official websites or APIs; public weather APIs. Privacy, consent, and access considerations include obtaining authorization to access menu data and collecting anonymized user data with opt-in consent.
 
 \section{Proposed AI Approaches}
-Present multiple plausible AI approaches. For each approach, briefly explain the core method, required data/resources, expected workflow, and practical feasibility. Divergent solutions are encouraged; do not present only one method under different names.
-
-[Replace this instruction with your proposal content.]
-
+To tackle the problem of campus dining recommendations, we propose three potential solutions.
+The first approach is a hybrid content-collaborative filtering model. It combines user preference profiles with historical item ratings or browsing behavior [1]. This approach requires interaction records and structured menu properties; its workflow uses matrix factorization or a collaborative evaluation matrix to compute similarity scores. Despite its high feasibility, it struggles with the cold-start problem for new users.
+The second approach is context-aware multi-criteria decision making. It utilizes decision analysis and a contextual framework, such as AHPSort for filtering unsuitable food options based on health constraints [2]. This approach requires user parameters and correlated database labels, and its workflow executes the rule-based ranking and optimization on filtered subsets. This approach is highly feasible and can effectively avoid hallucinations.
+The third approach is an LLM-driven semantic intent and data enrichment pipeline. This approach utilizes the natural language understanding capabilities of modern LLMs, maps the unstructured text to structured JSON intents, and automatically enriches the raw menu data. It relies heavily on pre-trained LLM APIs and a structured SQL backend. Its workflow includes analyzing input messages, querying tagged databases, and generating explainable recommendations [3]. This approach eliminates the need for model training from scratch, achieving rapid development and offering users high flexibility.
 \section{Comparative Analysis}
 Compare the proposed approaches using relevant dimensions such as expected effectiveness, data needs, implementation effort, compute cost, interpretability, robustness, privacy, and deployment constraints. Clearly identify the preferred approach and justify the choice.
 
@@ -100,14 +101,15 @@ To ensure the feasibility of the project, basic data collection is required, whi
 % Cite sources in the text and replace the sample entry below.
 \begin{thebibliography}{9}
 \small
-\bibitem{sample}
-[Author(s)], ``[Title],'' \emph{[Venue or Source]}, [Year].
 
-\bibitem{sample}
-[Author(s)], ``[Title],'' \emph{[Venue or Source]}, [Year].
+\bibitem{melese2021food}
+A.~Melese, ``Food and restaurant recommendation system using hybrid filtering mechanism,'' \emph{North Amer. Acad. Res.}, 2021.
 
-\bibitem{sample}
-[Author(s)], ``[Title],'' \emph{[Venue or Source]}, [Year].
+\bibitem{yera2019food}
+R.~Yera Toledo, A.~A.~Alzahrani, and L.~Mart{\'\i}nez, ``A food recommender system considering nutritional information and user preferences,'' \emph{IEEE Access}, 2019.
+
+\bibitem{min2020food}
+W.~Min, S.~Jiang, and R.~Jain, ``Food recommendation: Framework, existing solutions, and challenges,'' \emph{IEEE Trans. Multimedia}, 2020.
 
 \end{thebibliography}
 

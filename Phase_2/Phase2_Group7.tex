@@ -121,7 +121,6 @@ Two baselines isolate each component: keyword SQL filtering without the LLM, sta
 Sessions use a random token rather than an account, and we store the constraints a user types instead of names, student IDs or location history, so the profiles are strictly opt-in. Logs trim free-text utterances after thirty days, following the data-minimisation principle of the Personal Data (Privacy) Ordinance. Menu data were used within the outlets' published terms. Fairness was checked behaviourally: vegetarian, pork-free and budget queries return at least one dish at every outlet, and no outlet is excluded by the weights. Allergen output carries a disclaimer that the data reflect published menus.
 
 \section{Implementation Details}
-Describe the system pipeline, model/configuration, tools, training or inference procedure, and deployment or interface design. Provide enough detail for readers to understand and reproduce the workflow. Do not paste large blocks of code; use a public repository link when the project involves extensive coding.
 
 % A compact architecture or workflow figure is encouraged.
 % \begin{figure}[t]
@@ -131,7 +130,34 @@ Describe the system pipeline, model/configuration, tools, training or inference 
 %   \label{fig:workflow}
 % \end{figure}
 
-[Replace this instruction with your report content.]
+\textbf{3.1 Stack and repository layout}
+
+ A React single-page chat client talks to a FastAPI service, while PostgreSQL 16 holds the menu and session tables and an external LLM API is called for language understanding. The repository is split into ingest/ (endpoint clients and transcription CSVs), etl/ (cleaning and tag propagation), api/ (intent, filter, rank and guard modules), web/ (chat interface) and eval/ (query sets and scoring harness), with a docker-compose file that brings up the database and service so the demo reproduces with one command.
+
+\textbf{3.2 Data pipeline}
+
+ The ingest script pages a store's JSON and writes one raw file per outlet per snapshot, with a validator checks each hand-typed CSV against its schema afterwards with the cleaning rules above are applied as code rather than by hand so they can be re-run; the loader upserts into outlets, dishes, dish\_tags and sessions on a composite key of outlet and normalised name, so refreshing a menu updates prices instead of duplicating dishes. Tags sit in a JSONB column with a GIN index, which keeps "exclude these allergens" a single indexed predicate rather than a join across a tag table.
+
+\textbf{3.3 Stage 1: intent extraction}
+
+ The utterance and stored profile go to the LLM at temperature 0 with a JSON-schema-constrained response, yielding location, price ceiling, diet, excluded allergens, cuisine, mood, meal time and a clarification flag. The prompt includes the outlet list and a few-shot example so that ``near the library'' resolves to an outlet rather than a string, and instructs the model to emit null rather than invent a constraint. Invalid JSON triggers one repair retry, then a keyword fallback covering the common phrasings, so a schema failure degrades the chatbot instead of breaking it.
+
+\textbf{3.4 Stage 2: hard filtering}
+
+ The intent is compiled into parameterised SQL, so allergens are excluded through a NOT EXISTS clause with diet enforced and price capped, thus candidates are restricted to dishes whose service window covers the current time and whose outlet is open. An empty candidate set is detected here and returned honestly as "nothing matches, here is the closest relaxation" rather than passed to the model to paper over.
+
+\textbf{3.5 Stage 3: scoring and explanation}
+
+ The remaining candidates are ranked by the formula in Section 2 with weights 0.4/0.35/0.25 in a single configuration file, ties broken by price and then proximity, and at most two dishes per stall admitted to the top three so the answer is not three variants of chicken rice. Explanations are template-generated from the satisfied constraints (``\$12, vegetarian, 4 min from the library'') rather than written by the LLM, so an explanation does not contradict the data it describes.
+
+\textbf{3.6  Guardrail and feedback}
+
+ Before rendering, every dish the pipeline emits is checked against the identifiers returned by its SQL query and dropped if unmatched, driving the hallucinated-item rate to zero while still allowing the model to mis-rank. Each turn stores the resolved intent, SQL parameters and scored candidate list for the evaluation harness, and the thumbs and 1--5 rating widgets write to the feedback table.
+
+\textbf{3.7 Interface and deployment}
+
+ The chat window shows the reply, three cards with price, outlet, walk time and dietary tags, a ``why'' expander revealing which constraints were matched, and filter chips that let the user correct the parsed intent. The service runs under Docker Compose with keys in an environment file, and a frozen menu snapshot ships inside the image so the recorded demo still works if the campus network fails.
+
 
 \section{Results \& Evaluation}
 Present qualitative and quantitative results using appropriate metrics, baselines, tables, figures, examples, or user feedback. Explain the evaluation protocol and analyze whether the results support the project goals. Include important negative results or failure cases rather than reporting only successful examples.

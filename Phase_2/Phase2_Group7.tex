@@ -64,9 +64,61 @@ Briefly recap the campus or student-life problem, target users, project scope, a
 [Replace this instruction with your report content.]
 
 \section{Data Collection \& Methodology}
-Describe how the data were obtained, created, sampled, labelled, cleaned, and split. Report relevant dataset sizes and characteristics. Explain the selected AI methodology, baselines, evaluation design, and any privacy, consent, fairness, or safety measures. Justify major methodological choices.
+\textbf{2.1 Scope and sources} 
 
-[Replace this instruction with your report content.]
+The process of data collection targets the information previously identified as fragmented: outlet identity, location, opening hours and item-level menus. Scope was fixed to the ten CityU catering outlets on the university catering directory: the AC1 outlets (5F canteen, 4F coffee cart, Kebab Station), the AC2 3F canteen stalls (Dumpling City, Xibei Mian Guan, Tea House, Euro Gourmet, Mala Pot, Tasty Corner), AC3 (7F canteen, 3F cafe), BOC (8F teahouse, 9F faculty lounge), CMC 3F cafe and Lodge Bistro. 
+
+Two different acquisition routes were used, with seven outlets publishing a live menu through the CSD ordering platform, whose Aigens endpoint returns nested JSON with bilingual item names, prices, option groups and service windows, each queried once and archived the raw responses with timestamps, since menus change weekly. The remaining three publish menus only as images or link-in-bio pages, all transcribed and recorded manually. Records were normalised to [dish name], [price], [available time range] and enriched with outlet, cuisine style and operating hours. Prices were stored as integer HKD cents, and Chinese names kept alongside English so transcription errors could be caught by back-translation. Table 1 summarises the resulting dataset.
+
+\begin{table}[t]
+  \centering
+  \caption{Dataset summary after cleaning.}
+  \label{tab:dataset}
+  \begin{tabular}{lr}
+    \toprule
+    Characteristic & Value \\
+    \midrule
+    Catering outlets in scope & 10 \\
+    Outlets with machine-readable menus & 7 \\
+    Outlets transcribed manually & 3 \\
+    Raw menu entries captured & 310 \\
+    Dishes retained after cleaning & 250 \\
+    Dishes with explicit ingredient text & 118 \\
+    Allergen categories tagged & 8 \\
+    Evaluation queries (dev / test) & 30 / 60 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{2.2 Labelling} 
+
+Each dish carries an ingredient list, allergen flags (peanut, tree nut, shellfish, dairy, gluten, egg, soy, sesame), dietary categories (vegetarian, vegan, pork-free, alcohol-free), spice level and hot/cold state. The LLM drafted labels from the dish name and the outlet's ingredient notes, with the corrections and disagreements manually checked and adjudicated. "Unknown" is recorded where an outlet lists no ingredients rather than inferring from the name, since a wrongly inferred allergen could hospitalise a user and a filter that cannot distinguish "no peanuts" from "not stated" must fail closed.
+
+\textbf{2.3 Cleaning}
+
+Four measures are taken to remove noises. Set meal variants were collapsed into one dish with two prices, with non-food add-ons such as "Extra Cheese" and "Upgrade to Tea" dropped; items with no usable price were dropped, Mala Pot being sold per 50\,g and therefore not rankable against fixed-price dishes, and duplicated drinks were merged. Availability strings were normalised so that ``All Day'' became 00:00--23:59, and promotional text was stripped from names of the items. Missing fields were stored as NULL rather than imputed and the filter treats NULL as unverifiable, excluding the dish from allergen-safe results without deleting it from the menu.
+
+\textbf{2.4 Splits and evaluation queries} 
+
+No train/test split applies as nothing is pre-trained, and what required holding out is the evaluation set. Development queries were used while tuning prompts and weights, and test queries were then written to span single-constraint, multi-constraint, impossible and under-specified requests such as "something cheap and warm" or "no dairy anywhere". Each query carries binary constraint-satisfaction labels that has been agreed, so recommendations are scored against the constraints the user actually stated.
+
+\textbf{2.5 Selected approach} 
+
+The hybrid architecture foreshadowed in Phase 1 is implemented and supported by [3], combining the content-based scoring of [1] with the hard-constraint-then-rank procedure of [2]. Collaborative filtering was rejected instead of merely deprioritised, as every user is cold-start with no interaction history at launch, and popularity similarity would happily surface a peanut dish to an allergic user as popularity encodes nothing about safety. Training a recommender was excluded by scope and is unsupportable with the 280 dishes we have collected, so the model acts only as an inference-time translator.
+
+The design principle is strict constraint precedence. Hard filters such as allergens, diet and price ceiling execute in SQL and remove candidates permanently, so no weight can later resurrect a dish that violates a stated constraint. Only then do soft preferences score the survivors, each normalised to $[0,1]$:
+\[
+\text{Score} = w_1 \cdot \text{proximity} + w_2 \cdot \text{preference} + w_3 \cdot \text{history},
+\]
+with proximity measured as (1-normalised walking time), preference as cuisine and mood-tag overlap, and history as opt-in past acceptances. Keeping the LLM out of the ranking makes the system auditable, since the model only translates language so every recommendation traces to a database row, a filter clause and a weight.
+
+\textbf{2.6 Baselines and metrics} 
+
+Two baselines isolate each component: keyword SQL filtering without the LLM, standing in for conventional menu search, and a single prompt given the whole menu, standing in for the naive chatbot. Metrics are hard-constraint violation rate for safety, Top-3 relevance against the labelled queries for utility, hallucinated-item rate for faithfulness, plus latency and cost per query. Offline results are complemented by the Phase 1 satisfaction instrument, a 1--5 rating collected per session against the target mean of 3.5.
+
+\textbf{2.7 Privacy, consent and safety} 
+
+Sessions use a random token rather than an account, and we store the constraints a user types instead of names, student IDs or location history, so the profiles are strictly opt-in. Logs trim free-text utterances after thirty days, following the data-minimisation principle of the Personal Data (Privacy) Ordinance. Menu data were used within the outlets' published terms. Fairness was checked behaviourally: vegetarian, pork-free and budget queries return at least one dish at every outlet, and no outlet is excluded by the weights. Allergen output carries a disclaimer that the data reflect published menus.
 
 \section{Implementation Details}
 Describe the system pipeline, model/configuration, tools, training or inference procedure, and deployment or interface design. Provide enough detail for readers to understand and reproduce the workflow. Do not paste large blocks of code; use a public repository link when the project involves extensive coding.

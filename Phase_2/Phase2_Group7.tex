@@ -159,23 +159,34 @@ Sessions use a random token rather than an account, and we store the constraints
 
 
 \section{Results \& Evaluation}
-Present qualitative and quantitative results using appropriate metrics, baselines, tables, figures, examples, or user feedback. Explain the evaluation protocol and analyze whether the results support the project goals. Include important negative results or failure cases rather than reporting only successful examples.
+\begin{table}[t]
+  \centering
+  \caption{Main evaluation results.}
+  \label{tab:main-results}
+  \begin{tabular}{lccc}
+    \toprule
+    Method/Setting & Top-3 relevance rate $\uparrow$ & Hard-constraint violation rate $\downarrow$ & Hallucinated-item rate $\downarrow$\\
+    \midrule
+    Keyword-based SQL & 80\% & 6.67\% & 1.67\% \\
+    LLM-based method & 86.7\% & 1.67\% & 1.67\% \\
+    Implemented solution & 92\% & 0\% & 1.67\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-% \begin{table}[t]
-%   \centering
-%   \caption{Main evaluation results (replace metrics and values).}
-%   \label{tab:main-results}
-%   \begin{tabular}{lcc}
-%     \toprule
-%     Method/Setting & Metric 1 $\uparrow$ & Metric 2 $\downarrow$ \\
-%     \midrule
-%     [Baseline] & [\ldots] & [\ldots] \\
-%     [Implemented solution] & [\ldots] & [\ldots] \\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
+60 queries were prepared to evaluate the system's performance under several metrics, including Top-3 relevance rate, hard-constraint violation rate, and hallucinated-item rate. For comparison, keyword-based SQL and LLM-based methods will also be evaluated as baselines. While keyword-based SQL serves as a conventional menu search system, matching keywords rather than understanding the query, the LLM-based method uses the entire menu provided in a single prompt, simulating a basic chatbot. The queries covered different situations, including requests with a single requirement, multiple requirements, and ambiguous preferences. 
 
-[Replace this instruction with your report content.]
+Top-3 relevance is measured by whether the required elements in each query are fulfilled without missing any of them. To measure the hard-constraint violation rate, a violation is defined as any ingredient in the recommendations that contains allergens or dietary restrictions. For a recommendation that did not satisfy requirements other than allergens or dietary restrictions, for instance, restaurant specified or budget, it will be considered irrelevant rather than a violation. The hallucinated-item rate checks whether the system suggests dishes that do not exist in the database. In addition, response latency and cost per query are considered to assess the system's efficiency and operating costs.
+
+For the Top-3 relevance rate, compared with 80\% for keyword-based SQL searching and 86.7\% for the LLM approach, our hybrid system achieved 92\%, indicating that a highly relevant result was returned for each query. The remaining misses stem from requirements that are too ambiguous or too detailed. When the requirement is too ambiguous, such as asking for hot European dishes, the system recommended coffees instead of main dishes like spaghetti. On the other hand, when the requirements are overly detailed, the recommendations include dishes that can only satisfy part of them to provide enough recommendations. 
+
+For the hard-constraint violation rate, keyword-based SQL achieved 6.67\%, the LLM-based method achieved 1.67\%, and the system achieves 0\%, indicating no violations. This is because allergens and dietary requirements are validated before being passed to the ranking process. Therefore, no dishes that violate these constraints are recommended. 
+
+For the hallucinated-item rate, all three approaches achieved 1.67\% because one of the recommendations included an outdated item that was removed from the menu due to an out-of-sync database. A synchronous database could be a future improvement for solving these kinds of problems.
+
+Apart from the technical metrics, user satisfaction is another important factor in evaluating the system. The Phase 1 satisfaction instrument uses a 1-5 rating scale, with a target average score of 3.5. However, since the tests and evaluations are conducted internally, the satisfaction target cannot yet be confirmed.
+
+Overall, the system was able to provide food recommendations based on users' requirements through natural language input. It can handle multiple requirements in a single request, and the system will identify the relevant conditions before searching the menu, ensuring it does not violate them or produce a hallucinated response, thereby providing a quality answer.
 
 \section{Discussion}
 \subsection{Pros and Cons of the System} 

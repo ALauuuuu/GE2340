@@ -95,15 +95,15 @@ Each dish carries an ingredient list, allergen flags (peanut, tree nut, shellfis
 
 \textbf{2.3 Cleaning}
 
-Four measures are taken to remove noises. Set meal variants were collapsed into one dish with two prices, with non-food add-ons such as "Extra Cheese" and "Upgrade to Tea" dropped; items with no usable price were dropped, Mala Pot being sold per 50\,g and therefore not rankable against fixed-price dishes, and duplicated drinks were merged. Availability strings were normalised so that ``All Day'' became 00:00--23:59, and promotional text was stripped from names of the items. Missing fields were stored as NULL rather than imputed and the filter treats NULL as unverifiable, excluding the dish from allergen-safe results without deleting it from the menu.
+Four measures are taken to remove noises. Set meal variants were collapsed into one dish with two prices, with non-food add-ons such as ``Extra Cheese'' and ``Upgrade to Tea'' dropped; items with no usable price were dropped, Mala Pot being sold per 50\,g and therefore not rankable against fixed-price dishes, and duplicated drinks were merged. Availability strings were normalised so that ``All Day'' became 00:00--23:59, and promotional text was stripped from names of the items. Missing fields were stored as NULL rather than imputed and the filter treats NULL as unverifiable, excluding the dish from allergen-safe results without deleting it from the menu.
 
 \textbf{2.4 Splits and evaluation queries} 
 
-No train/test split applies as nothing is pre-trained, and what required holding out is the evaluation set. Development queries were used while tuning prompts and weights, and test queries were then written to span single-constraint, multi-constraint, impossible and under-specified requests such as "something cheap and warm" or "no dairy anywhere". Each query carries binary constraint-satisfaction labels that has been agreed, so recommendations are scored against the constraints the user actually stated.
+The system relies on a pre-trained LLM for semantic intent parsing rules without task-specific model training or fine-tuning, a standard train/test does not applies and the evaluation query set had to be held out. Development queries were used while tuning prompts and weights, and test queries were then written to span single-constraint, multi-constraint, impossible and under-specified requests such as "something cheap and warm" or "no dairy anywhere". Each query carries binary constraint-satisfaction labels that has been agreed, so recommendations are scored against the constraints the user actually stated.
 
 \textbf{2.5 Selected approach} 
 
-The hybrid architecture foreshadowed in Phase 1 is implemented and supported by [3], combining the content-based scoring of [1] with the hard-constraint-then-rank procedure of [2]. Collaborative filtering was rejected instead of merely deprioritised, as every user is cold-start with no interaction history at launch, and popularity similarity would happily surface a peanut dish to an allergic user as popularity encodes nothing about safety. Training a recommender was excluded by scope and is unsupportable with the 280 dishes we have collected, so the model acts only as an inference-time translator.
+The hybrid architecture proposed in Phase 1 is implemented and supported by [3], combining the content-based scoring of [1] with the hard-constraint and rank procedure of [2]. Collaborative filtering was rejected instead of merely deprioritised, as all users is cold start without interaction history at launch, and reliance on historical co-occurrence or popularity signals cannot guarantee allergen exclusion and food safety. Training a recommender was excluded by scope, as the collected 250 meals are insufficient for model training. Therefore, the LLM acts exclusively as an inference-time translator.
 
 The design principle is strict constraint precedence. Hard filters such as allergens, diet and price ceiling execute in SQL and remove candidates permanently, so no weight can later resurrect a dish that violates a stated constraint. Only then do soft preferences score the survivors, each normalised to $[0,1]$:
 \[
@@ -207,8 +207,16 @@ This project aims to address the inefficiency in dining choices on campus by dev
 % Cite sources in the text and replace the sample entry below.
 \begin{thebibliography}{9}
 \small
-\bibitem{sample}
-[Author(s)], ``[Title],'' \emph{[Venue or Source]}, [Year].
+
+\bibitem{melese2021food}
+[1] A.~Melese, ``Food and restaurant recommendation system using hybrid filtering mechanism,'' \emph{North Amer. Acad. Res.}, 2021.
+
+\bibitem{yera2019food}
+[2] R.~Yera Toledo, A.~A.~Alzahrani, and L.~Mart{\'\i}nez, ``A food recommender system considering nutritional information and user preferences,'' \emph{IEEE Access}, 2019.
+
+\bibitem{min2020food}
+[3] W.~Min, S.~Jiang, and R.~Jain, ``Food recommendation: Framework, existing solutions, and challenges,'' \emph{IEEE Trans. Multimedia}, 2020.
+
 \end{thebibliography}
 
 % Course policy reminder: LLMs may be used to refine and polish writing,

@@ -131,8 +131,7 @@ Sessions use a random token rather than an account, and we store the constraints
 
 \textbf{3.1 Stack and repository layout}
 
- A React single-page chat client talks to a FastAPI service, while PostgreSQL 16 holds the menu and session tables and an external LLM API is called for language understanding. The repository is split into ingest/ (endpoint clients and transcription CSVs), etl/ (cleaning and tag propagation), api/ (intent, filter, rank and guard modules), web/ (chat interface) and eval/ (query sets and scoring harness), with a docker-compose file that brings up the database and service so the demo reproduces with one command.
-
+A React single-page chat client communicates with a FastAPI service, while PostgreSQL 16 stores the menu and session tables, and an external LLM API handles natural language understanding. The repository is organised into five modules: ingest for endpoint clients and transcription CSVs, etl for data cleaning and tag propagation, api for intent extraction, filtering, ranking, and guardrails, web for the chat interface, and eval for query sets and the scoring harness. A Docker Compose configuration launches both the database and the backend service, enabling the demonstration environment to start with a single command.
 \textbf{3.2 Data pipeline}
 
  The ingest script pages a store's JSON and writes one raw file per outlet per snapshot, with a validator checks each hand-typed CSV against its schema afterwards with the cleaning rules above are applied as code rather than by hand so they can be re-run; the loader upserts into outlets, dishes, dish\_tags and sessions on a composite key of outlet and normalised name, so refreshing a menu updates prices instead of duplicating dishes. Tags sit in a JSONB column with a GIN index, which keeps "exclude these allergens" a single indexed predicate rather than a join across a tag table.
